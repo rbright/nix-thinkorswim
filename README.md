@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/rbright/nix-thinkorswim/actions/workflows/ci.yml/badge.svg)](https://github.com/rbright/nix-thinkorswim/actions/workflows/ci.yml)
 
-Standalone Nix flake packaging for Charles Schwab thinkorswim on Linux/NixOS.
+Nix package for Charles Schwab thinkorswim.
 
 ## What this repo provides
 

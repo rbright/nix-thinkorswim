@@ -1,5 +1,5 @@
 {
-  description = "Standalone Nix package for thinkorswim on Linux/NixOS";
+  description = "Nix package for Charles Schwab thinkorswim";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
