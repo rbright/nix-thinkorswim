@@ -33,3 +33,9 @@ Create a new standalone Nix flake repository `nix-thinkorswim` modeled after exi
 - [x] Add `precommit-run` support to `nix-thinkorswim` justfile.
 - [x] Update `nix-thinkorswim` GitHub Actions CI to run matching linting/check steps.
 - [x] Re-run local verification for updated CI/linting commands.
+
+## Follow-up: harden launcher patch behavior
+
+- [x] Preserve shebang when injecting launcher Java override variables.
+- [x] Add `THINKORSWIM_PATCH_LAUNCHER_JAVA` runtime knob to disable patching for diagnosis.
+- [x] Re-run local validation (`just lint`, `just build`).

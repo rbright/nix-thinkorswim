@@ -101,3 +101,24 @@ Notes:
   - `nixos-config`: `nix flake update thinkorswim --flake hosts/omega` ✅
   - `nixos-config`: `just build omega` ✅
   - runtime log now shows `java version 21.0.8` and `java version ok` ✅
+
+## 2026-02-25
+
+### Follow-up: launcher patch hardening for diagnosis safety
+
+- Hardened `scripts/run-thinkorswim.sh` launcher mutation logic:
+  - replaced ad-hoc `sed` insertion with `upsert_launcher_assignment` helper
+  - preserves shebang when inserting missing vars
+  - still updates existing commented/uncommented `INSTALL4J_JAVA_HOME_OVERRIDE`
+- Added runtime opt-out knob:
+  - `THINKORSWIM_PATCH_LAUNCHER_JAVA=0` skips launcher patching
+- Updated `README.md` runtime knobs to document the new env var.
+
+### Verification executed
+
+- `just lint` ✅
+- `just build` ✅
+- Shebang-preservation smoke test (mock installer + launcher) ✅
+  - confirmed patched launcher retains `#!/bin/sh` as first line
+- Patch-disable smoke test (`THINKORSWIM_PATCH_LAUNCHER_JAVA=0`) ✅
+  - confirmed launcher remains unmodified

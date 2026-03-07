@@ -54,6 +54,7 @@ nix run 'path:.#thinkorswim'
 
 - `THINKORSWIM_HOME`: override install location (must be writable)
 - `THINKORSWIM_FORCE_REINSTALL=1`: remove existing install before launching
+- `THINKORSWIM_PATCH_LAUNCHER_JAVA=0`: disable launcher-script Java pinning (debug/rollback knob)
 
 Example:
 

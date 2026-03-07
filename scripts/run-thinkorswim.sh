@@ -10,36 +10,61 @@ install_dir="${THINKORSWIM_HOME:-$xdg_data_home/thinkorswim}"
 install_parent="$(dirname "$install_dir")"
 default_install_dir="${install_parent}/thinkorswim"
 
+upsert_launcher_assignment() {
+  local script="$1"
+  local key="$2"
+  local assignment="$3"
+  local match_commented="${4:-0}"
+
+  local tmp
+  local found=0
+  tmp="$(mktemp)"
+
+  while IFS= read -r line || [[ -n "$line" ]]; do
+    if [[ "$match_commented" == "1" && "$line" =~ ^[[:space:]]*#[[:space:]]*${key}= ]]; then
+      printf '%s\n' "$assignment" >> "$tmp"
+      found=1
+      continue
+    fi
+
+    if [[ "$line" =~ ^[[:space:]]*${key}= ]]; then
+      printf '%s\n' "$assignment" >> "$tmp"
+      found=1
+      continue
+    fi
+
+    printf '%s\n' "$line" >> "$tmp"
+  done < "$script"
+
+  if [[ "$found" -eq 0 ]]; then
+    local injected
+    injected="$(mktemp)"
+    {
+      IFS= read -r first || true
+      if [[ "${first:-}" == '#!'* ]]; then
+        printf '%s\n' "$first"
+        printf '%s\n' "$assignment"
+        cat
+      else
+        printf '%s\n' "$assignment"
+        [[ -n "${first:-}" ]] && printf '%s\n' "$first"
+        cat
+      fi
+    } < "$tmp" > "$injected"
+    mv "$injected" "$tmp"
+  fi
+
+  chmod --reference="$script" "$tmp"
+  mv "$tmp" "$script"
+}
+
 pin_install4j_java() {
   local script="$1"
   [[ -f "$script" ]] || return 0
 
-  if grep -q '^# INSTALL4J_JAVA_HOME_OVERRIDE=' "$script"; then
-    sed -i "s|^# INSTALL4J_JAVA_HOME_OVERRIDE=.*$|INSTALL4J_JAVA_HOME_OVERRIDE=\"$java_home\"|" "$script"
-  elif grep -q '^INSTALL4J_JAVA_HOME_OVERRIDE=' "$script"; then
-    sed -i "s|^INSTALL4J_JAVA_HOME_OVERRIDE=.*$|INSTALL4J_JAVA_HOME_OVERRIDE=\"$java_home\"|" "$script"
-  else
-    local tmp
-    tmp="$(mktemp)"
-    {
-      printf 'INSTALL4J_JAVA_HOME_OVERRIDE="%s"\n' "$java_home"
-      cat "$script"
-    } > "$tmp"
-    chmod --reference="$script" "$tmp"
-    mv "$tmp" "$script"
-  fi
-
-  if grep -q '^INSTALL4J_NO_PATH=' "$script"; then
-    sed -i 's|^INSTALL4J_NO_PATH=.*$|INSTALL4J_NO_PATH=true|' "$script"
-  else
-    sed -i '/^INSTALL4J_JAVA_HOME_OVERRIDE=/a INSTALL4J_NO_PATH=true' "$script"
-  fi
-
-  if grep -q '^JAVA_HOME=' "$script"; then
-    sed -i "s|^JAVA_HOME=.*$|JAVA_HOME=\"$java_home\"|" "$script"
-  else
-    sed -i "/^INSTALL4J_NO_PATH=true/a JAVA_HOME=\"$java_home\"" "$script"
-  fi
+  upsert_launcher_assignment "$script" "INSTALL4J_JAVA_HOME_OVERRIDE" "INSTALL4J_JAVA_HOME_OVERRIDE=\"$java_home\"" 1
+  upsert_launcher_assignment "$script" "INSTALL4J_NO_PATH" "INSTALL4J_NO_PATH=true"
+  upsert_launcher_assignment "$script" "JAVA_HOME" "JAVA_HOME=\"$java_home\""
 }
 
 if [[ "${THINKORSWIM_FORCE_REINSTALL:-0}" == "1" ]]; then
@@ -80,7 +105,10 @@ fi
 
 # thinkorswim sometimes self-restarts via the installed launcher script.
 # Pin Java in that script so restarts do not fall back to an older system JVM.
-pin_install4j_java "$launcher"
+# Set THINKORSWIM_PATCH_LAUNCHER_JAVA=0 to disable this patching behavior.
+if [[ "${THINKORSWIM_PATCH_LAUNCHER_JAVA:-1}" == "1" ]]; then
+  pin_install4j_java "$launcher"
+fi
 
 export INSTALL4J_JAVA_HOME_OVERRIDE="$java_home"
 export INSTALL4J_NO_PATH=true
