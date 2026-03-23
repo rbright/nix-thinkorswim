@@ -3,8 +3,6 @@
   stdenv,
   stdenvNoCC,
   fetchurl,
-  copyDesktopItems,
-  makeDesktopItem,
   makeWrapper,
   bash,
   coreutils,
@@ -58,26 +56,7 @@ stdenvNoCC.mkDerivation {
     hash = "sha256-ZvZ3dJoUdu8wFu0avKeRipO2lIZ0yTmh8Tl93fJ0uW0=";
   };
 
-  nativeBuildInputs = [
-    copyDesktopItems
-    makeWrapper
-  ];
-
-  desktopItems = [
-    (makeDesktopItem {
-      name = "thinkorswim";
-      desktopName = "thinkorswim";
-      genericName = "Trading Platform";
-      comment = "Launch Charles Schwab thinkorswim";
-      exec = "thinkorswim";
-      terminal = false;
-      categories = [
-        "Office"
-        "Finance"
-      ];
-      startupWMClass = "thinkorswim";
-    })
-  ];
+  nativeBuildInputs = [ makeWrapper ];
 
   dontUnpack = true;
 
@@ -147,7 +126,7 @@ stdenvNoCC.mkDerivation {
     '';
 
   meta = {
-    description = "thinkorswim desktop trading platform launcher for NixOS";
+    description = "thinkorswim trading platform launcher for NixOS";
     homepage = "https://www.schwab.com/trading/thinkorswim";
     license = lib.licenses.unfree;
     mainProgram = "thinkorswim";
