@@ -39,3 +39,9 @@ Create a new standalone Nix flake repository `nix-thinkorswim` modeled after exi
 - [x] Preserve shebang when injecting launcher Java override variables.
 - [x] Add `THINKORSWIM_PATCH_LAUNCHER_JAVA` runtime knob to disable patching for diagnosis.
 - [x] Re-run local validation (`just lint`, `just build`).
+
+## Follow-up: remove packaged desktop launcher entry
+
+- [x] Stop installing `thinkorswim.desktop` from `package.nix`.
+- [x] Update README wording to match launcher behavior.
+- [x] Re-run local validation (`just check`, `just build`).

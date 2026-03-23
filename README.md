@@ -10,7 +10,6 @@ Nix package for Charles Schwab thinkorswim.
 - Nix app output: `.#thinkorswim`
 - Wrapper that uses `zulu21` (OpenJDK 21)
 - First-run unattended installer flow into user-writable storage
-- Desktop entry (`thinkorswim.desktop`) for launchers like Vicinae
 - Local quality gate (`just`) and GitHub Actions CI
 
 ## How installation works
@@ -79,7 +78,8 @@ Use the packaged launcher instead:
 thinkorswim
 ```
 
-and remove/ignore old installer desktop launchers.
+and remove/ignore old installer desktop launchers. This package does not install its own
+`.desktop` launcher entry.
 
 ## Notes
 

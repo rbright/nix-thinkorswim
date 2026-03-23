@@ -122,3 +122,15 @@ Notes:
   - confirmed patched launcher retains `#!/bin/sh` as first line
 - Patch-disable smoke test (`THINKORSWIM_PATCH_LAUNCHER_JAVA=0`) ✅
   - confirmed launcher remains unmodified
+
+## 2026-03-23
+
+### Follow-up: remove packaged desktop launcher entry
+
+- Removed `makeDesktopItem` / `copyDesktopItems` usage from `package.nix` so the package no longer installs `share/applications/thinkorswim.desktop`.
+- Updated `README.md` to stop advertising a packaged desktop entry and to clarify that old installer-created desktop launchers are legacy artifacts.
+
+### Verification executed
+
+- `just check` ✅
+- `just build` ✅
